@@ -1,17 +1,22 @@
 from rest_framework import serializers
+from django.contrib.auth import password_validation
 from django.contrib.auth import get_user_model
 from ..models import TenantUser
 User = get_user_model()
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    document_type = serializers.CharField(
+        source='get_document_type_display'
+    )
+    
     role = serializers.SerializerMethodField()
-    permissions = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField() 
     
     class Meta:
         model = User
-        fields = ['name', 'lastname', 'document_type', 'document_number', 'phone', 'email', 'created_at', 'updated_at', 'role', 'permissions']
-        read_only_fields = ['document_type', 'document_number', 'email', 'created_at', 'updated_at', 'role', 'permissions']
+        fields = ['name', 'lastname', 'document_type', 'document_number', 'phone', 'email', 'role', 'permissions']
+        read_only_fields = ['email', 'document_type', 'document_number', 'role', 'permissions']
     
     def _get_tenant_user(self, obj):
         if not hasattr(self, "_tenant_user"):
@@ -21,7 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 "role__permissions"
             ).filter(
                 user=obj,
-                tenant=self.context["tenant"]
+                tenant = self.context["request"].tenant
             ).first()
         return self._tenant_user
     
@@ -38,3 +43,36 @@ class ProfileSerializer(serializers.ModelSerializer):
         return list(
             tenant_user.role.permissions.values_list("description", flat=True)
         )
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate_password(self, value):
+        user = self.context['request'].user
+
+        if not user.check_password(value):
+            raise serializers.ValidationError("La contraseña actual es incorrecta.")
+
+        return value
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError(
+                {"confirm_password": "La contraseñas no coinciden."}
+            )
+
+        password_validation.validate_password(
+            attrs['new_password'],
+            self.context['request'].user
+        )
+
+        return attrs
+
+    def save(self, **kwargs):
+        user = self.context['request'].user
+        user.set_password(self.validated_data['new_password'])
+        user.save()
+        return user

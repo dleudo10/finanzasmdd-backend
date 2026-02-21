@@ -5,6 +5,7 @@ from .views import (
     LogOutAPIView, 
     RefreshTokenAPIView, 
     ProfileAPIView, 
+    ChangePasswordAPIView,
     TenantAPIView,
     RoleViewSet,
 )
@@ -18,7 +19,8 @@ urlpatterns = [
     path("auth/select-tenant/", SelectTenantAPIView.as_view(), name="select_tenant"),
     path("auth/logout/", LogOutAPIView.as_view(), name="logout"),
     path("auth/tokens/refresh/", RefreshTokenAPIView.as_view(), name="refresh_token"),
-    path("me/", ProfileAPIView.as_view(), name="me"),
+    path("profile/me/", ProfileAPIView.as_view(), name="me"),
+    path("profile/change-password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("tenant/", TenantAPIView.as_view(), name="tenant"),
     path("", include(router.urls)),
 ]

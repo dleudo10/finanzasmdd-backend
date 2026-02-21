@@ -98,6 +98,7 @@ class LogOutAPIView(APIView):
         
         return response
     
+# === VISTA DE REFRESCO DE TOKEN ===
 @method_decorator(csrf_protect, name="dispatch")
 class RefreshTokenAPIView(APIView):
     permission_classes = [AllowAny]
