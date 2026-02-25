@@ -7,4 +7,4 @@ class RoleViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         tenant = self.request.tenant
-        return Role.objects.filter(tenant=tenant, is_owner_role=False, is_active=True)
+        return Role.objects.filter(tenant=tenant, is_owner_role=False)

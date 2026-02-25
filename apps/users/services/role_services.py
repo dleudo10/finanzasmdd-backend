@@ -7,7 +7,8 @@ class RoleService:
             tenant=tenant,
             name=name,
             description=description,
-            is_active=is_active
+            is_active=is_active,
+            is_owner_role=False
         )
         role.permissions.set(permissions)
         return role
