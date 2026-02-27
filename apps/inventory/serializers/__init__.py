@@ -1,1 +1,2 @@
 from .category_serializer import CategorySerializer
+from .list_prices_serializer import ListPriceSerializer
