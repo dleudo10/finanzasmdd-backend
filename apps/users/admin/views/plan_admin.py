@@ -9,4 +9,4 @@ class PlanAdmin(SimpleHistoryAdmin):
     search_fields = ('name',)
     ordering = ('-created_at',)
     
-    
+     

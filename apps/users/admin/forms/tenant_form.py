@@ -2,7 +2,7 @@ from django import forms
 from apps.core.choices import TypeDocument, TypePerson, SubscriptionStatus
 from ...models import Tenant, Plan
 from django.contrib.auth import get_user_model
-User = get_user_model()
+User = get_user_model() 
 
 class TenantForm(forms.ModelForm):
     email = forms.EmailField(label="Correo")
