@@ -1,6 +1,6 @@
 from django.db import transaction
 from ...models import Tenant, Role, TenantUser, Permission, Plan, Subscription
-from apps.inventory.models import ListPrice
+from apps.inventory.models import ListPrice, Warehouse
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth import get_user_model
@@ -87,11 +87,17 @@ class CreateTenantService:
         
         # Agregando configuracion incial por tenant 
         # === LISTA DE PRECIOS ===
-        
         ListPrice.objects.create(
             tenant=tenant,
             name="GENERAL",
-            is_base=True
+            is_main=True
+        )
+        
+        # === ALMACENES - BODEGAS ===
+        Warehouse.objects.create(
+            tenant=tenant,
+            name="PRINCIPAL",
+            is_main=True
         )
 
         return tenant

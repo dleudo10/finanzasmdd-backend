@@ -1,2 +1,3 @@
 from .category_serializer import CategorySerializer
 from .list_prices_serializer import ListPriceSerializer
+from .warehouse_serializer import WarehouseSerializer
