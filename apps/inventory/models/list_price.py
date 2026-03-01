@@ -5,7 +5,7 @@ from simple_history.models import HistoricalRecords
 
 class ListPrice(BaseState, TimesTampTime):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
-    name = models.CharField('nombre', max_length=150, unique=True)
+    name = models.CharField('nombre', max_length=150)
     is_main = models.BooleanField('es principal', default=False)
     
     history = HistoricalRecords()
@@ -22,5 +22,10 @@ class ListPrice(BaseState, TimesTampTime):
                 fields=["tenant"],
                 condition=models.Q(is_main=True),
                 name="unique_active_list_price_per_tenant"
+            ),
+            models.UniqueConstraint(
+                fields=["tenant", "name"],
+                name="unique_list_price_name_tenant"
             )
         ]
+        

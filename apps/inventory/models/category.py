@@ -8,7 +8,7 @@ from apps.users.models import Tenant
 
 class Category(BaseState, TimesTampTime):
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
-    category = models.CharField(max_length=150, unique=True)
+    category = models.CharField(max_length=150)
     description = models.TextField(null=True, blank=True)
     
     history = HistoricalRecords()
@@ -16,3 +16,14 @@ class Category(BaseState, TimesTampTime):
     
     def __str__(self):
         return super().__str__()
+    
+    class Meta:
+        db_table = "categories"
+        verbose_name = "categoria"
+        verbose_name_plural = "categorias"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["tenant", "category"],
+                name="unique_product_name_tenant"
+            )
+        ]
