@@ -43,3 +43,6 @@ class Role(BaseState, TimesTampTime):
                 name='unique_owner_role_per_tenant'
             )
         ]
+        indexes = [
+            models.Index(fields=["tenant", "description"]),
+        ]
