@@ -2,7 +2,7 @@ from django.contrib import admin
 from ...models import Tenant
 from simple_history.admin import SimpleHistoryAdmin
 from ..forms import TenantForm
-from ...services.tenant.create_tenant import CreateTenantService
+from ...services.create_tenant import CreateTenantService
 
 @admin.register(Tenant)
 class TenantAdmin(SimpleHistoryAdmin):

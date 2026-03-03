@@ -2,13 +2,24 @@ from django.db import models
 from apps.users.models import Tenant
 from apps.core.models import BaseState, TimesTampTime
 from simple_history.models import HistoricalRecords
+from django.core.exceptions import ValidationError
 
 class ListPrice(BaseState, TimesTampTime):
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    tenant = models.ForeignKey(Tenant, on_delete=models.PROTECT)
     name = models.CharField('nombre', max_length=150)
-    is_main = models.BooleanField('es principal', default=False)
+    is_default = models.BooleanField('por defecto', default=False)
     
     history = HistoricalRecords()
+    
+    def delete(self, using=None, keep_parents=False):
+        if self.is_default:
+            raise ValidationError(f"No se puede eliminar la lista de precios '{self.name}' porque es la lista de precios por defecto")
+        super().delete(using=using, keep_parents=keep_parents)
+    
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.strip().lower()
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.name
@@ -20,7 +31,7 @@ class ListPrice(BaseState, TimesTampTime):
         constraints = [
             models.UniqueConstraint(
                 fields=["tenant"],
-                condition=models.Q(is_main=True),
+                condition=models.Q(is_default=True),
                 name="unique_active_list_price_per_tenant"
             ),
             models.UniqueConstraint(

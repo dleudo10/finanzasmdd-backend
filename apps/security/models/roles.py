@@ -4,20 +4,19 @@ from apps.core.models import (
     BaseState
 )
 from simple_history.models import HistoricalRecords
-from .tenants import Tenant
 from .permissions import Permission
 
 # === ROLES ===
 class Role(BaseState, TimesTampTime):
     tenant = models.ForeignKey(
-        Tenant,
+        'users.Tenant',
         on_delete=models.CASCADE,
         related_name='roles'
     )
-    name = models.CharField(max_length=150)
-    description = models.TextField(blank=True, null=True)
+    name = models.CharField('nombre', max_length=150)
+    description = models.TextField('descripción', blank=True, null=True)
     permissions = models.ManyToManyField(Permission, related_name="roles")
-    is_owner_role = models.BooleanField(default=False)
+    is_owner_role = models.BooleanField('rol', default=False)
     
     history = HistoricalRecords()
     

@@ -3,7 +3,6 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = 'django-insecure-15py$msv6+v+dk**tq)tkf#aa4@o9$z3p@ud^-)9!y5l$nu_9@'
 
 DEBUG = True
@@ -32,6 +31,7 @@ INSTALLED_APPS = [
     
     # === MIS APPS ===
     'apps.core',
+    'apps.security',
     'apps.users',
     'apps.inventory',
     'apps.movements',

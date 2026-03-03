@@ -4,5 +4,5 @@ from .list_price import ListPrice
 from .warehouse import Warehouse
 from .product import Product
 from .stock import Stock
-from .price_sales_history import PriceSalesHistory
-from .product_unit_measure import ProductUnitMeasure
+from .price_history import PriceHistory
+from .product_unit import ProductUnit

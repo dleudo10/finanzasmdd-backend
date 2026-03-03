@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from .views import (
     LoginAPIView,  
     SelectTenantAPIView,
@@ -7,12 +7,7 @@ from .views import (
     ProfileAPIView, 
     ChangePasswordAPIView,
     TenantAPIView,
-    RoleViewSet,
 )
-from rest_framework.routers import DefaultRouter
-
-router = DefaultRouter()
-router.register(r'roles', RoleViewSet, basename='roles')
 
 urlpatterns = [
     path("auth/login/", LoginAPIView.as_view(), name="login"),
@@ -22,5 +17,4 @@ urlpatterns = [
     path("profile/me/", ProfileAPIView.as_view(), name="me"),
     path("profile/change-password/", ChangePasswordAPIView.as_view(), name="change_password"),
     path("tenant/", TenantAPIView.as_view(), name="tenant"),
-    path("", include(router.urls)),
 ]

@@ -14,7 +14,6 @@ class UsersService:
                     phone: str,
                     email: str,
                     password: str,
-                    is_staff: bool,
                     is_active: bool,
                     tenant: Tenant,
                     role: Role,
@@ -33,7 +32,7 @@ class UsersService:
             document_type=document_type,
             document_number=document_number,
             phone=phone,
-            is_staff=is_staff,
+            is_staff=False,
             is_active=is_active
         )
         

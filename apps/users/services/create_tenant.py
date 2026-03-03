@@ -1,10 +1,11 @@
 from django.db import transaction
-from ...models import Tenant, Role, TenantUser, Permission, Plan, Subscription
+from ..models import Tenant, TenantUser, Plan, Subscription
 from apps.inventory.models import ListPrice, Warehouse
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth import get_user_model
 from apps.core.choices import SubscriptionStatus
+from apps.security.models import Role, Permission
 
 User = get_user_model()
 
@@ -70,7 +71,7 @@ class CreateTenantService:
         # Configuración de Roles y Permisos
         admin_role, _ = Role.objects.get_or_create(
             tenant=tenant,
-            name="DUEÑO",
+            name="dueño",
             defaults={"description": "Acceso total al sistema"},
             is_owner_role = True
         )
@@ -89,15 +90,15 @@ class CreateTenantService:
         # === LISTA DE PRECIOS ===
         ListPrice.objects.create(
             tenant=tenant,
-            name="GENERAL",
-            is_main=True
+            name="general",
+            is_default=True
         )
         
         # === ALMACENES - BODEGAS ===
         Warehouse.objects.create(
             tenant=tenant,
-            name="PRINCIPAL",
-            is_main=True
+            name="principal",
+            is_default=True
         )
 
         return tenant

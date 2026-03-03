@@ -45,13 +45,13 @@ class UserManager(BaseUserManager):
  
 # === MODELO USUARIO ===
 class User(AbstractBaseUser, PermissionsMixin, BaseState, TimesTampTime):
-    name = models.CharField(max_length=200)
-    lastname = models.CharField(max_length=200)
-    document_type = models.CharField(max_length=2, choices=TypeDocument.choices, default=TypeDocument.CC)
-    document_number = models.CharField(max_length=20, unique=True)
-    phone = models.CharField(max_length=10)
-    email = models.EmailField(unique=True)
-    is_staff = models.BooleanField(default=False)
+    name = models.CharField('nombre', max_length=200)
+    lastname = models.CharField('apellido', max_length=200)
+    document_type = models.CharField('tipo de documento', max_length=2, choices=TypeDocument.choices, default=TypeDocument.CC)
+    document_number = models.CharField('numero de documento', max_length=20, unique=True)
+    phone = models.CharField('telefono', max_length=10)
+    email = models.EmailField('correo electronico', unique=True)
+    is_staff = models.BooleanField('is_staff', default=False)
 
     objects = UserManager()
     USERNAME_FIELD = "email"

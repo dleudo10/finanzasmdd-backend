@@ -5,7 +5,7 @@ from apps.core.models import (
 )
 from simple_history.models import HistoricalRecords
 from .tenants import Tenant
-from .roles import Role
+from apps.security.models import Role
 
 from django.contrib.auth import get_user_model
 User = get_user_model()

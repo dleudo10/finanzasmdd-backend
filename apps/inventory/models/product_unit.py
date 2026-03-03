@@ -1,13 +1,12 @@
 from django.db import models
-from apps.core.models import TimesTampTime
+from apps.core.models import TimesTampTime, BaseState
 from simple_history.models import HistoricalRecords
 from .unit_measure import UnitMeasure
 from .product import Product
 from apps.users.models import Tenant
 from django.core.exceptions import ValidationError
 
-
-class ProductUnitMeasure(TimesTampTime):
+class ProductUnit(BaseState, TimesTampTime):
     tenant = models.ForeignKey(
         Tenant,
         on_delete=models.PROTECT
@@ -31,6 +30,7 @@ class ProductUnitMeasure(TimesTampTime):
     
     history = HistoricalRecords()
     
+    
     def clean(self):
         if self.conversion_factor <= 0:
             raise ValidationError({"conversion_factor": "El factor de conversión debe ser mayor que 0."})
@@ -38,14 +38,62 @@ class ProductUnitMeasure(TimesTampTime):
         if self.is_base and self.conversion_factor != 1:
             raise ValidationError({"conversion_factor": "La unidad base debe tener un factor de conversión = 1."})
         
+        if not self.is_base and (self.conversion_factor is None or self.conversion_factor <= 1):
+            raise ValidationError({"conversion_factor": "El factor de conversión debe de ser mayor a 1"})
+        
         if self.product.tenant_id != self.tenant_id:
             raise ValidationError({"product": "El producto no pertenece a la empresa"})    
         
         if not (self.sku or self.bar_code or self.plu):
             raise ValidationError("Debe ingresar al menos uno: SKU, Código de barras o PLU.")
+        
+        if  self.requires_weight and self.plu is None:
+            raise ValidationError({"plu": "Es obligatorio"})
+        
+        if not self.is_base:
+            base_exists = ProductUnit.objects.filter(
+                product=self.product,
+                tenant=self.tenant,
+                is_base=True
+            ).exclude(pk=self.pk).exists()
+
+            if not base_exists:
+                raise ValidationError(
+                    "El producto debe tener al menos una unidad base."
+                )
+                
+        if not self.pk:
+            return 
+
+        original = type(self).objects.get(pk=self.pk)
+
+        has_movements = self.kardex.exists()
+
+        if has_movements:
+            restricted_fields = ["is_base", "sku", "bar_code", "plu"]
+
+            for field in restricted_fields:
+                if getattr(original, field) != getattr(self, field):
+                    raise ValidationError({
+                        field: "No se puede modificar este campo porque el producto ya tiene movimientos registrados."
+                    })
+            
+    def delete(self, using=None, keep_parents=False):
+        if self.is_base:
+            raise ValidationError(
+                f"No se puede eliminar la unidad base '{self.presentation_name}' del producto '{self.product}'."
+            )
+        return super().delete(using=using, keep_parents=keep_parents)
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs) 
+            
+    def __str__(self):
+        return f"{self.product} {self.unit_measure} - {self.conversion_factor}"
     
     class Meta:
-        db_table = "product_unit_measure"
+        db_table = "products_unit"
         verbose_name = "Unidad de producto"
         verbose_name_plural = "Unidades de producto"
         constraints = [
@@ -69,9 +117,4 @@ class ProductUnitMeasure(TimesTampTime):
                 condition=models.Q(plu__isnull=False),
                 name="unique_product_unit_plu_tenant"
             )
-        ]
-        indexes = [
-            models.Index(fields=["tenant", "product"]),
-            models.Index(fields=["tenant", "sku"]),
-            models.Index(fields=["tenant", "bar_code"]),
         ]

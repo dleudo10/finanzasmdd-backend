@@ -3,8 +3,8 @@ from simple_history.models import HistoricalRecords
 
 # === PERMISOS ===    
 class Permission(models.Model):
-    code = models.CharField(max_length=100, unique=True)
-    description = models.TextField()
+    code = models.CharField('codigo', max_length=100, unique=True)
+    description = models.TextField('descripción', unique=True)
     
     def __str__(self):
         return self.code
