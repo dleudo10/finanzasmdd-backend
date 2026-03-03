@@ -6,6 +6,7 @@ from rest_framework.filters import (
 )
 from apps.core.mixin import ResponseWrapperMixin
 from ..pagination import CustomPagination
+from apps.security.permissions import HasPermission
 
 class BaseViewSet(
     ResponseWrapperMixin,
@@ -24,6 +25,7 @@ class BaseViewSet(
     pagination_class = CustomPagination
     serializer_action_classes = {}
     permission_action_classes = {}
+    permission_classes = [HasPermission]
     
     # -------------------------
     # SERIALIZER POR ACCIÓN
@@ -40,11 +42,15 @@ class BaseViewSet(
     # PERMISOS POR ACCIÓN
     # -------------------------
     def get_permissions(self):
+        base_permissions = [p() for p in self.permission_classes]
+
         if hasattr(self, "action"):
-            perms = self.permission_action_classes.get(self.action)
-            if perms:
-                return [p() for p in perms]
-        return super().get_permissions()
+            extra_permissions = self.permission_action_classes.get(self.action)
+            if extra_permissions:
+                return base_permissions + [p() for p in extra_permissions]
+
+        return base_permissions
+     
     
     # -------------------------
     # HOOK RUNNER
