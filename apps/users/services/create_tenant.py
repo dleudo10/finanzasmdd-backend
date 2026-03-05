@@ -10,7 +10,6 @@ from apps.security.models import Role, Permission
 User = get_user_model()
 
 class CreateTenantService:
-    @staticmethod
     @transaction.atomic
     def execute(*, 
                 trade_name: str, 
@@ -27,7 +26,7 @@ class CreateTenantService:
                 observations: str = None,
     ) -> Tenant:
         
-        # Creación de usuarip
+        # Creación de usuario
         user, created = User.objects.get_or_create(
             email=email.lower(),
             defaults={

@@ -3,10 +3,15 @@ from rest_framework.response import Response
 from permissions import IsOwner
 from ..serializers import ProfileSerializer, ChangePasswordSerializer
 from rest_framework import status
+from apps.security.permissions import HasPermission
 
 # === VISTA DE PERFIL DE USUARIO ===
 class ProfileAPIView(APIView):
-    permission_classes = [IsOwner]
+    permission_classes = [IsOwner, HasPermission]
+    
+    permission_map = {
+        "patch": "profile.update"
+    }
     
     def get(self, request):
         serializer = ProfileSerializer(request.user, context={'request': request})

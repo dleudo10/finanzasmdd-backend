@@ -3,14 +3,14 @@
 from django.db import migrations
 
 SYSTEM_PERMISSIONS = [
-    # users
+    # usuarios
     ("users.view_profile", "Ver perfil"),
     ("users.update_profile", "Editar perfil"),
         
-    # permissions
+    # permisos
     ("permissions.view", "Ver permisos"),
 
-    # warehouses
+    # bodegas
     ("warehouse.view", "Ver bodegas"),
     ("warehouse.history", "Ver historial de bodegas"),
     ("warehouse.create", "Crear bodegas"),
@@ -25,8 +25,16 @@ SYSTEM_PERMISSIONS = [
     ("list_price.update", "Editar lista de precios"),
     ("list_price.delete", "Eliminar lista de precios"),
     ("list_price.activate", "Activar lista de precios"),
+    
+    # categorias
+    ("category.view", "Ver categorias"),
+    ("category.history", "Ver historial de categoriaa"),
+    ("category.create", "Crear categorias"),
+    ("category.update", "Editar categorias"),
+    ("category.delete", "Eliminar catgorias"),
+    ("category.activate", "Activar categorias"),
         
-    # products
+    # productos
     ("product.view", "Ver productos"),
     ("product.kardex", "Ver historial"),
     ("product.create", "Crear productos"),
@@ -36,7 +44,7 @@ SYSTEM_PERMISSIONS = [
     ("product_unit.kardex", "Ver historial"),
 
         
-    # products unit
+    # producto unidad
     ("product_unit.view", "Ver unidad de productos"),
     ("product_unit.create", "Crear unidad de productos"),
     ("product_unit.update", "Editar unidad de productos"),
